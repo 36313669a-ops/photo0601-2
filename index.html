@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<title>攝影比賽投票</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #111;
+  color: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  padding: 10px;
+}
+
+.card {
+  position: relative;
+  background: #222;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  height: 180px;
+  object-fit: contain;
+  background: black;
+}
+
+.qr {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  width: 50px;
+  height: 50px;
+  background: white;
+}
+</style>
+</head>
+
+<body>
+
+<h2>攝影比賽投票</h2>
+<div class="grid" id="grid"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const grid = document.getElementById("grid");
+
+for (let i = 1; i <= 65; i++) {
+  const id = String(i).padStart(3, '0');
+
+  const card = document.createElement("div");
+  card.className = "card";
+
+  const img = document.createElement("img");
+  img.src = `PHOTO/${id}.jpg`;
+
+  img.onerror = () => {
+    img.src = `https://via.placeholder.com/300x200?text=${id}`;
+  };
+
+  const qr = document.createElement("img");
+  qr.className = "qr";
+  qr.src = `https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${location.origin}/qr.html?id=${id}`;
+
+  card.onclick = () => {
+    location.href = `qr.html?id=${id}`;
+  };
+
+  card.appendChild(img);
+  card.appendChild(qr);
+  grid.appendChild(card);
+}
+</script>
+
+</body>
+</html>
